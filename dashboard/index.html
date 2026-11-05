@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Telemetria PetFeliz</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a1a19'/%3E%3Cpath d='M5 22l6-8 5 5 6-10 5 7' fill='none' stroke='%23199e70' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topo">
+  <div class="topo-linha">
+    <h1>Telemetria do agente de vendas <span class="loja">PetFeliz</span></h1>
+    <div class="vivo" id="vivo" role="status" aria-live="polite"><span class="ponto"></span><span id="vivo-texto">conectando…</span></div>
+  </div>
+  <div class="legenda-origem" id="legenda-origem" aria-label="Legenda das cores dos cards"></div>
+</header>
+<main id="dash"><p class="carregando">Carregando…</p></main>
+<div id="tip" role="tooltip"></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
