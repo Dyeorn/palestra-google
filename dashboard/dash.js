@@ -25,18 +25,25 @@ export function montarDash(root) {
 
 // Foco do apresentador: → / ← (ou PageDown / PageUp do clicker) destacam o próximo card na ordem do roteiro;
 // clicar num card também o destaca; Esc limpa. O contorno é sutil de propósito.
-const ORDEM_TOUR = ['dia', 'hora', 'ttft', 'tools', 'tok', 'funil', 'aband', 'rec', 'prod', 'cupom', 'perfil', 'intent', 'sent', 'perda', 'vivo'];
+// 'kpis' = faixa de KPIs do topo; 'legenda' = legenda azul/laranja do cabeçalho; o resto são ids de cards.
+const ORDEM_TOUR = ['kpis', 'legenda', 'dia', 'hora', 'tools', 'tok', 'funil', 'aband', 'kpis', 'rec', 'prod', 'cupom', 'perfil',
+  'intent', 'sent', 'perda', 'vivo'];
 
 function iniciarFoco(root) {
   let i = -1;
   const ind = document.createElement('div'); ind.id = 'tour-ind'; document.body.appendChild(ind);
+  const alvo = id => id === 'kpis' ? root.querySelector('#d-kpis')
+    : id === 'legenda' ? document.getElementById('legenda-origem') : root.querySelector('#c-' + id);
   const aplicar = (n, rolar = true) => {
-    root.querySelectorAll('.dcard.foco').forEach(c => c.classList.remove('foco'));
+    document.querySelectorAll('.foco').forEach(c => c.classList.remove('foco'));
     i = n;
     if (i < 0) { ind.style.opacity = 0; return; }
-    const c = root.querySelector('#c-' + ORDEM_TOUR[i]); if (!c) return;
+    const id = ORDEM_TOUR[i], c = alvo(id); if (!c) return;
     c.classList.add('foco');
-    if (rolar) c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (rolar) {
+      if (id === 'kpis' || id === 'legenda') window.scrollTo({ top: 0, behavior: 'smooth' });  // ficam no topo
+      else c.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
     ind.textContent = `${i + 1}/${ORDEM_TOUR.length}`; ind.style.opacity = 1;
   };
   document.addEventListener('keydown', e => {

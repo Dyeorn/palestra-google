@@ -109,3 +109,6 @@ svg text.reftxt { fill: var(--ink-2); font-weight: 600; }
 .ms { flex: 1 1 110px; background: var(--surface-2); border-radius: 8px; padding: 6px 12px; min-width: 0; }
 .ms b { display: block; font-size: 1.15rem; font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .ms span { font-size: .78rem; color: var(--ink-2); }
+
+.kpi-faixa.foco, .legenda-origem.foco { outline: 1px solid rgba(240,239,236,.4); outline-offset: 6px; border-radius: 12px; box-shadow: 0 0 28px rgba(240,239,236,.06); }
+.kpi-faixa, .legenda-origem { transition: outline-color .18s, box-shadow .18s; }
