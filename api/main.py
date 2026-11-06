@@ -25,6 +25,15 @@ def db() -> sqlite3.Connection:
     return connect(DB_PATH)
 
 
+@app.middleware("http")
+async def dashboard_sem_cache(request, call_next):
+    """O navegador revalida o dashboard a cada carga (senão um JS antigo pode ficar em cache)."""
+    resp = await call_next(request)
+    if not request.url.path.startswith("/api"):
+        resp.headers["Cache-Control"] = "no-cache"
+    return resp
+
+
 @app.get("/api/coverage")
 def coverage():
     cov = load_coverage()

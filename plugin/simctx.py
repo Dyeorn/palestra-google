@@ -24,8 +24,8 @@ BASE_TOOL_LATENCY_MS = {
     "buscar_produtos": 140, "consultar_estoque": 110, "recomendar_produtos": 220,
     "aplicar_cupom": 70, "criar_pedido": 320, "registrar_reclamacao": 160,
 }
-CHAOS_TOOL_FAIL = 0.45
-CHAOS_LATENCY_MULT = 3.4
+CHAOS_TOOL_FAIL = 0.30
+CHAOS_LATENCY_MULT = 2.5
 
 
 class ModelUnavailable(RuntimeError):

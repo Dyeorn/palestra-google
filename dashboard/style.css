@@ -95,3 +95,17 @@ svg text.reftxt { fill: var(--ink-2); font-weight: 600; }
   font-size: .85rem; line-height: 1.35; box-shadow: 0 6px 24px rgba(0,0,0,.5); opacity: 0; transition: opacity .08s; max-width: 280px; }
 #tip b { font-weight: 750; } #tip .sw { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+.linha-barra:has(.sent) { grid-template-columns: minmax(90px, 30%) 1fr auto auto; }
+.sent { display: inline-block; min-width: 56px; text-align: center; padding: 2px 8px; border-radius: 6px; font-weight: 750; font-size: .85rem; color: #121212; font-variant-numeric: tabular-nums; }
+
+/* ---------- foco do apresentador (contorno sutil) ---------- */
+.dcard { scroll-margin-top: 120px; transition: box-shadow .18s, border-color .18s; }
+.dcard.foco { border-color: rgba(240,239,236,.5); box-shadow: 0 0 0 1px rgba(240,239,236,.28), 0 0 28px rgba(240,239,236,.07); }
+#tour-ind { position: fixed; right: 14px; bottom: 12px; z-index: 30; font-size: .8rem; color: var(--ink-3); background: rgba(14,14,13,.85);
+  padding: 2px 10px; border-radius: 999px; opacity: 0; transition: opacity .2s; pointer-events: none; font-variant-numeric: tabular-nums; }
+
+.mini-stats { display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.ms { flex: 1 1 110px; background: var(--surface-2); border-radius: 8px; padding: 6px 12px; min-width: 0; }
+.ms b { display: block; font-size: 1.15rem; font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.ms span { font-size: .78rem; color: var(--ink-2); }

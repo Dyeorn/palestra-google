@@ -23,7 +23,7 @@ uv run uvicorn api.main:app --port 8000     # abrir http://localhost:8000
 Na hora da palestra, em outro terminal:
 
 ```bash
-uv run python -m simulator.run --live       # tráfego contínuo; o dashboard atualiza a cada 4 s
+uv run python -m simulator.run --live       # tráfego contínuo; já "aquece" os últimos 8 min (--aquecer 0 desliga); o dashboard atualiza a cada 4 s
 ```
 
 No dashboard, o botão **Ativar caos** (painel 10) liga erro de ferramenta + lentidão no simulador

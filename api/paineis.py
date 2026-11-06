@@ -9,6 +9,13 @@ from common.config import TTFT_META_MS, now_local
 
 PANELS: dict = {}
 
+JANELA_MIN = 2        # janela "recente" dos KPIs ao vivo
+JANELA_MIN_CHAMADAS = 20  # abaixo disso a janela é pequena demais: o dashboard usa o acumulado
+
+
+def _desde(minutos: int = JANELA_MIN) -> str:
+    return (now_local() - timedelta(minutes=minutos)).strftime("%Y-%m-%d %H:%M:%S")
+
 
 def painel(pid: str):
     def deco(fn):
@@ -79,7 +86,10 @@ def tempo_primeira_resposta(db):
     todos = [r["ttft_ms"] for r in rows]
     lat = [r["latency_ms"] for r in q(db, "SELECT latency_ms FROM model_calls WHERE status='ok'")]
     pior = max(por_hora, key=lambda h: h["p95_ms"] or 0) if por_hora else None
-    return {"p50_ms": pct(todos, 50), "p95_ms": pct(todos, 95), "meta_ms": TTFT_META_MS,
+    rec = [r["ttft_ms"] for r in q(db, "SELECT ttft_ms FROM model_calls WHERE status = 'ok' AND ttft_ms IS NOT NULL "
+                                       "AND called_at >= ?", (_desde(),))]
+    recente = {"minutos": JANELA_MIN, "chamadas": len(rec), "p95_ms": pct(rec, 95)}
+    return {"recente": recente, "p50_ms": pct(todos, 50), "p95_ms": pct(todos, 95), "meta_ms": TTFT_META_MS,
             "latencia_total_p50_ms": pct(lat, 50), "latencia_total_p95_ms": pct(lat, 95),
             "por_hora": por_hora, "pior_hora": pior["hora"] if pior else None,
             "chamadas": len(todos)}
@@ -96,7 +106,11 @@ def falhas_ferramentas(db):
     m = one(db, "SELECT COUNT(*) AS chamadas, COALESCE(SUM(status != 'ok'),0) AS erros FROM model_calls")
     ag = one(db, "SELECT COUNT(*) AS erros FROM agent_errors")
     tot = sum(f["chamadas"] for f in ferramentas) or 1
-    return {"ferramentas": ferramentas,
+    rec = one(db, "SELECT COUNT(*) AS chamadas, COALESCE(SUM(1 - success), 0) AS falhas FROM tool_calls "
+                  "WHERE called_at >= ?", (_desde(),))
+    recente = {"minutos": JANELA_MIN, "chamadas": rec["chamadas"], "falhas": rec["falhas"],
+               "taxa_erro_pct": round(100.0 * rec["falhas"] / rec["chamadas"], 1) if rec["chamadas"] else None}
+    return {"recente": recente, "ferramentas": ferramentas,
             "total_chamadas": tot, "total_falhas": sum(f["falhas"] for f in ferramentas),
             "erros_modelo": {"erros": m["erros"], "chamadas": m["chamadas"]},
             "erros_agente": {"erros": ag["erros"]}}

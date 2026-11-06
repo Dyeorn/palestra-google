@@ -182,6 +182,21 @@ async def main_async(a) -> None:
     else:
         print(f"ao vivo: 1 conversa a cada ~{a.intervalo}s. Ctrl+C para parar. "
               f"Caos: {'LIGADO (--chaos)' if a.chaos else 'controlado pelo dashboard'}")
+        minutos = a.aquecer if offline else 0   # no modo real não gasta chamadas de API só para aquecer
+        if minutos > 0:
+            # "Aquece": gera os últimos N minutos na mesma cadência do ao vivo, para a linha e os KPIs
+            # já abrirem preenchidos (sem precisar ligar o --live uns 6 minutos antes).
+            n = int(minutos * 60 / a.intervalo)
+            print(f"aquecendo: {n} conversas dos últimos {minutos} min (a linha ao vivo já abre preenchida)...")
+            agora, aquece = now_local(), []
+            for k in range(n):
+                inicio = agora - timedelta(minutes=minutos) + timedelta(seconds=k * minutos * 60 / n)
+                c = simctx.SimContext(start=inicio, rng=random.Random(random.random()), simulate_latency=offline,
+                                      chaos=a.chaos, think_scale=0.08, load=0.5, prompt_extra_tokens=420)
+                aquece.append(asyncio.create_task(guarded(run_conversation(
+                    runner, app, plugin, c, rng.choices(names, weights)[0], random.getrandbits(32)))))
+            await asyncio.gather(*aquece)
+            print("aquecimento pronto; seguindo em tempo real.")
         i, running = 0, set()
         try:
             while True:
@@ -219,6 +234,7 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--concorrencia", type=int, default=0)
     ap.add_argument("--intervalo", type=float, default=1.5, help="segundos entre conversas (--live)")
+    ap.add_argument("--aquecer", type=float, default=8, help="minutos recentes gerados ao iniciar o --live (0 desliga)")
     a = ap.parse_args()
     try:
         asyncio.run(main_async(a))
